@@ -72,3 +72,13 @@ class CategoryDetailWindow(QWidget):
         self.ui.category_name_le.setStyleSheet("border: 1px solid #e0e5e9;")
         self.ui.error_category_name.setText("")
         self.ui.category_name_le.setText("")
+
+    def handle_delete_event(self, category_id):
+        try:
+            reply = message_box_delete("Các sản phẩm thuộc loại sản phẩm này sẽ bị xóa. Bạn có chắc chắn muốn xóa loại sản phẩm này không?")
+            if reply == QMessageBox.Yes:
+                self.category_controller.deleteDataWithModel(category_id)
+        except Exception as E:
+            print(E)
+            return False
+        return True

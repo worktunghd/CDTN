@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine, text, update, or_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
+
+from src.models import OrderDetail
 from src.models.base import Base
 from src.views.common.Common import warningMessagebox
 import configparser
-import sqlalchemy
-print(sqlalchemy.__version__)
 class ConnectMySQL:
     def __init__(self, config_file_path="alembic.ini"):
         config = configparser.ConfigParser()
@@ -30,6 +30,72 @@ class ConnectMySQL:
         """
         self.connection = self.engine.connect()
         self.session = self.Session()
+
+    def deleteDataMutipleWithModel(self, model, ids):
+        try:
+            self.connect()
+            self.session.query(model).filter(model.id.in_((ids))).delete()
+            self.session.commit()
+            return True
+        except Exception as E:
+            print(E)
+            return
+
+        finally:
+            self.close()
+
+    def process_relation_with_request(self, relation, items):
+        for model in relation:
+            for item in items:
+                if model.uuid == item.get('uuid'):
+                    model.update(item)
+                    self.session.commit()
+                    break
+            else:
+                # If the item's uuid doesn't match any existing model, delete the model
+                relation.remove(model)
+                self.session.delete(model)
+                self.session.commit()
+
+        for item in items:
+            if 'uuid' not in item:
+                # If the item has no uuid, create a new model in the relation
+                model_class = type(relation)
+                new_model = model_class(**item)
+                relation.append(new_model)
+                self.session.commit()
+
+    def insertDataMultipleWithModel(self, data):
+        try:
+            self.connect()
+            self.session.bulk_save_objects(data)
+            self.session.commit()
+            return True
+        except Exception as E:
+            print(E)
+            return
+
+        finally:
+            self.close()
+
+    # cập nhật bản ghi và thêm mới các bản ghi cho 1 relation
+    def updateDataWithModelRelation(self, data, model, model_id, data_relation):
+        try:
+            self.connect()
+            # query = update(model).where(model.id == model_id).values(data)
+            # self.session.execute(query)
+            self.session.merge(data)
+            # thêm mới các bản ghi cho relation
+            # self.session.bulk_save_objects(data_relation)
+            self.session.commit()
+            return True
+        except Exception as E:
+            print(E)
+            warningMessagebox("Đã xảy ra lỗi")
+            self.session.rollback()
+            return False
+        finally:
+            self.close()
 
     def close(self):
         self.connection.close()
@@ -62,6 +128,19 @@ class ConnectMySQL:
         finally:
             self.close()
 
+    def updateOrInsert(self, data):
+        try:
+            self.connect()
+            self.session.merge(data)
+            self.session.commit()
+            return True
+        except Exception as E:
+            print(E)
+            self.session.rollback()
+            return False
+        finally:
+            self.close()
+
     def updateDataWithQuery(self, query):
         return
 
@@ -85,7 +164,7 @@ class ConnectMySQL:
     def getDataByIdWithModel(self, model, model_id):
         try:
             self.connect()
-            result = self.session.query(model).filter_by(id=model_id).first()
+            result = self.session.query(model).options(joinedload('*')).filter_by(id=model_id).first()
             return result
 
         except Exception as E:
@@ -162,14 +241,32 @@ class ConnectMySQL:
         finally:
             self.close()
 
+    def getDataByModelIdWithRelation(self, model, model_id):
+        """
+               Common function to get data from database.
+               """
+        try:
+            self.connect()
+            query = self.session.query(model).filter(model.id == model_id).options(joinedload('*'))
+            result = query.distinct().order_by(model.created_at).first()
+            return result
+
+        except Exception as E:
+            print(E)
+            return []
+
+        finally:
+            self.close()
+
+
     def getDataByModel(self, model):
         """
         Common function to get data from database.
         """
         try:
             self.connect()
-            query = self.session.query(model)
-            result = query.distinct().all()
+            query = self.session.query(model).options(joinedload('*'))
+            result = query.distinct().order_by(model.created_at.desc()).all()
             return result
 
         except Exception as E:

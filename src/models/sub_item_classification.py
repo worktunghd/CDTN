@@ -8,7 +8,7 @@ from sqlalchemy.dialects.mysql import INTEGER
 class SubItemClassification(Base, BaseMixin):
     __tablename__ = 'sub_item_classifications'
     # tên phân loại
-    sub_item_classification_name = Column(String(255), unique=True)
+    sub_item_classification_name = Column(String(255))
     # số lượng
     quantity = Column(INTEGER)
     # giá

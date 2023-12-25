@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QFileDialog, QCalendarWidget
-from PyQt5.QtCore import pyqtSlot, QFileInfo
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import pyqtSlot, QFileInfo, QDate
 from src.views.ui_generated.admin.product_detail import Ui_Form
 from src.views.common.Common import *
 import os
@@ -9,6 +9,7 @@ from src.controllers.admin.ProductController import ProductController
 from src.controllers.admin.CategoryController import CategoryController
 from src.models.products import Product
 from src.models.images import Image
+from datetime import datetime
 import shutil
 
 class ProductDetailWindow(QWidget):
@@ -20,6 +21,8 @@ class ProductDetailWindow(QWidget):
         self.product_controller = ProductController()
         # khởi tạo biến
         self.product_image = None
+        self.category_selected = None
+        self.selected_date = None
         # khởi tạo các button
         self.btn_image_product = self.ui.btn_image_product
         self.btn_manufacture_date_product = self.ui.btn_manufacture_date_product
@@ -37,6 +40,7 @@ class ProductDetailWindow(QWidget):
         self.combobox_category = self.ui.category_le
         self.product_image_le = self.ui.product_image_le
         self.manufacture_date_le = self.ui.manufacture_date_le
+        self.combobox_category.activated.connect(self.handle_category_selected)
 
     def showEvent(self, event):
         self.category = self.category_controller.getDataByModel()
@@ -47,6 +51,9 @@ class ProductDetailWindow(QWidget):
         else:
             self.combobox_category.addItem("Không có dữ liệu")
 
+    # xử lý khi chọn loại sản phẩm
+    def handle_category_selected(self, index):
+        self.category_selected = self.category[index]
 
     # xử lý chọn ảnh sản phẩm
     @pyqtSlot()
@@ -88,6 +95,7 @@ class ProductDetailWindow(QWidget):
 
     # hiển thị ngày tháng được chọn lên label
     def on_selected_date(self, selected_date):
+        self.selected_date = selected_date
         self.manufacture_date_le.setText(f"{selected_date.toString('dd/MM/yyyy')}")
 
     @pyqtSlot()
@@ -117,7 +125,6 @@ class ProductDetailWindow(QWidget):
 
         if category == SelectBox.DEFAULT.value:
             category = ''
-
         # validate dữ liệu các cột không được trống
         is_invalid = validateEmpty(self,{'product_name': product_name, 'product_code': product_code, 'category': category, 'manufacture_date': manufacture_date, 'product_image': product_image}, messages)
         if price == 0:
@@ -134,14 +141,17 @@ class ProductDetailWindow(QWidget):
         if is_invalid:
             return
 
+        # xử lý ngày tháng
+        manufacture_date = datetime(self.selected_date.year(), self.selected_date.month(), self.selected_date.day())
 
+        # xử lý ảnh
         destination_folder = "resources/images/product"
         # Tạo thư mục lưu trữ ảnh sản phẩm nếu chưa có
         os.makedirs(destination_folder, exist_ok=True)
         # Đường dẫn đến thư mục đích
         new_file_name = generate_unique_filename(product_image)
         destination_path = os.path.join(destination_folder, new_file_name)
-        product = Product(product_code=product_code, product_name=product_name, price=price, quantity=quantity, description=description, manufacture_date=manufacture_date)
+        product = Product(product_code=product_code, product_name=product_name, price=price, quantity=quantity, description=description, manufacture_date=manufacture_date, category_id=self.category_selected.id)
         image = Image(image_url=destination_path)
         product.product_image = [image]
         if form_mode == FormMode.ADD.value:
@@ -150,7 +160,9 @@ class ProductDetailWindow(QWidget):
                 self.ui.error_product_code.setText(messages["product_codeExit"])
                 self.ui.product_code_le.setStyleSheet(border_error)
                 return
-
+            if self.product_image:
+                # di chuyển ảnh vào thư mục dự án
+                shutil.copy(self.product_image, destination_path)
             self.product_controller.insertData(product)
         elif form_mode == FormMode.EDIT.value:
             if self.product_controller.checkExitsDataUpdateWithModel(Product.product_code, data=product_code, model_id=product_id):
@@ -158,7 +170,10 @@ class ProductDetailWindow(QWidget):
                 self.ui.error_product_code.setText(messages["product_codeExit"])
                 self.ui.product_code_le.setStyleSheet(border_error)
                 return
-            self.product_controller.updateDataWithModel(data={'product_name': product_name, 'product_code': product_code, 'price': price, 'quantity': quantity, 'description': description, 'manufacture_date':manufacture_date, 'product_image': [image]}, model_id=product_id)
+            if self.product_image:
+                # di chuyển ảnh vào thư mục dự án
+                shutil.copy(self.product_image, destination_path)
+            self.product_controller.updateDataWithModel(data={'product_name': product_name, 'product_code': product_code, 'price': price, 'quantity': quantity, 'description': description, 'manufacture_date': manufacture_date, 'category_id': self.category_selected.id}, model_id=product_id)
         else:
             return
 
@@ -168,7 +183,21 @@ class ProductDetailWindow(QWidget):
     def handle_edit_event(self, category_id):
         product = self.product_controller.getDataByIdWithModel(category_id)
         if product:
+            self.ui.product_code_le.setText(product.product_code)
             self.ui.product_name_le.setText(product.product_name)
+            self.ui.price_le.setValue(int(product.price))
+            self.ui.quantity_le.setValue(int(product.quantity))
+            self.selected_date = product.manufacture_date
+            # loại sản phẩm
+            self.category_selected = product.category
+            index = self.category.index(product.category)
+            self.combobox_category.setCurrentIndex(index)
+            if product.product_image:
+                self.ui.product_image_le.setText(product.product_image[0].image_url)
+            self.selected_date = QDate(product.manufacture_date.year, product.manufacture_date.month, product.manufacture_date.day)
+            # xử lý ngày tháng
+            self.manufacture_date_le.setText(f"{self.selected_date.toString('dd/MM/yyyy')}")
+            self.ui.description_le.setPlainText(product.description)
 
     # clear dữ liệu trên form
     def clear_form(self):
@@ -187,6 +216,7 @@ class ProductDetailWindow(QWidget):
         self.ui.error_quantity.setText("")
         self.ui.error_manufacture_date.setText("")
         self.ui.product_name_le.setText("")
+        self.ui.product_code_le.setText("")
         self.ui.product_image_le.setText("")
         # self.ui.combobox_category_i
         self.ui.price_le.setValue(0)

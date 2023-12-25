@@ -7,5 +7,5 @@ from .base import Base, BaseMixin
 class Image(Base, BaseMixin):
     __tablename__ = 'images'
     image_url = Column(String(255))
-    product_id = Column(INTEGER(unsigned=True), ForeignKey('products.id'))
-    product = relationship('Product', back_populates='product_image')
+    product_id = Column(INTEGER(unsigned=True), ForeignKey('products.id', ondelete='CASCADE'))
+    product = relationship('Product', back_populates='product_image', single_parent=True)

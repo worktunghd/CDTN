@@ -87,7 +87,7 @@ def seeder_user():
         # tạo 1 tài khoản mặc định
         connection = engine.connect()
         session = Session()
-        session.add(User(username='0912229762', name='admin', password='1'))
+        session.add(User(username='0912229762', name='admin', password='1', level=2))
         session.commit()
 
     except Exception as E:

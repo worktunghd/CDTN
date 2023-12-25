@@ -19,3 +19,21 @@ class FormMode(Enum):
 class SelectBox(Enum):
     DEFAULT = 'Không có dữ liệu'
 
+
+class OrderStatus(Enum):
+    PROGRESS = 0
+    ORDER_SUCCESS = 1
+    ORDER_FAIL = 2
+
+
+class ProductSelected(Enum):
+    # số lượng tối đa được chọn khi đặt hàng
+    MAX_SELECTED = 50
+    # số lượng tối thiểu để cảnh báo khi sản phẩm sắp hết
+    WARNING_SELECTED = 10
+
+
+class UserRole(Enum):
+    EMPLOYEE = 0  # nhân viên
+    WAREHOUSE_EMPLOYEE = 1  # nhân viên kho
+    ADMIN = 2  # admin

@@ -14,22 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form_gourp_btn(object):
     def setupUi(self, Form_gourp_btn):
         Form_gourp_btn.setObjectName("Form_gourp_btn")
-        Form_gourp_btn.resize(256, 252)
-        Form_gourp_btn.setStyleSheet("#order_group_btn{\n"
-"    border: 1px solid #e5e5e5;\n"
-"}\n"
-"\n"
-"#minus_order_btn, #plus_order_btn{\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"#minus_order_btn{\n"
-"    border-right: 1px solid #e5e5e5;\n"
-"}\n"
-"\n"
-"#plus_order_btn{\n"
-"        border-left: 1px solid #e5e5e5;\n"
-"}")
+        Form_gourp_btn.resize(401, 252)
+        Form_gourp_btn.setStyleSheet("")
         self.verticalLayout = QtWidgets.QVBoxLayout(Form_gourp_btn)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setSpacing(0)
@@ -68,14 +54,14 @@ class Ui_Form_gourp_btn(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.order_group_btn = QtWidgets.QWidget(self.widget)
         self.order_group_btn.setMinimumSize(QtCore.QSize(0, 28))
-        self.order_group_btn.setMaximumSize(QtCore.QSize(100, 28))
+        self.order_group_btn.setMaximumSize(QtCore.QSize(150, 28))
         self.order_group_btn.setObjectName("order_group_btn")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.order_group_btn)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setSpacing(20)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.minus_order_btn = QtWidgets.QPushButton(self.order_group_btn)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -86,24 +72,12 @@ class Ui_Form_gourp_btn(object):
         self.minus_order_btn.setMinimumSize(QtCore.QSize(29, 28))
         self.minus_order_btn.setMaximumSize(QtCore.QSize(28, 28))
         self.minus_order_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.minus_order_btn.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icon/resources/icon/pen.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.minus_order_btn.setIcon(icon)
         self.minus_order_btn.setObjectName("minus_order_btn")
-        self.horizontalLayout.addWidget(self.minus_order_btn)
-        self.quantity_order = QtWidgets.QSpinBox(self.order_group_btn)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.quantity_order.sizePolicy().hasHeightForWidth())
-        self.quantity_order.setSizePolicy(sizePolicy)
-        self.quantity_order.setMinimumSize(QtCore.QSize(0, 28))
-        self.quantity_order.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.quantity_order.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.quantity_order.setFrame(False)
-        self.quantity_order.setAlignment(QtCore.Qt.AlignCenter)
-        self.quantity_order.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
-        self.quantity_order.setMinimum(1)
-        self.quantity_order.setMaximum(50)
-        self.quantity_order.setObjectName("quantity_order")
-        self.horizontalLayout.addWidget(self.quantity_order, 0, QtCore.Qt.AlignTop)
+        self.horizontalLayout.addWidget(self.minus_order_btn, 0, QtCore.Qt.AlignLeft)
         self.plus_order_btn = QtWidgets.QPushButton(self.order_group_btn)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -113,8 +87,14 @@ class Ui_Form_gourp_btn(object):
         self.plus_order_btn.setMinimumSize(QtCore.QSize(29, 28))
         self.plus_order_btn.setMaximumSize(QtCore.QSize(28, 28))
         self.plus_order_btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.plus_order_btn.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icon/resources/icon/red-delete-10433.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.plus_order_btn.setIcon(icon1)
         self.plus_order_btn.setObjectName("plus_order_btn")
-        self.horizontalLayout.addWidget(self.plus_order_btn)
+        self.horizontalLayout.addWidget(self.plus_order_btn, 0, QtCore.Qt.AlignLeft)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.horizontalLayout_3.addLayout(self.horizontalLayout)
         self.horizontalLayout_2.addWidget(self.order_group_btn)
         self.verticalLayout.addWidget(self.widget, 0, QtCore.Qt.AlignTop)
@@ -125,6 +105,4 @@ class Ui_Form_gourp_btn(object):
     def retranslateUi(self, Form_gourp_btn):
         _translate = QtCore.QCoreApplication.translate
         Form_gourp_btn.setWindowTitle(_translate("Form_gourp_btn", "Form"))
-        self.minus_order_btn.setText(_translate("Form_gourp_btn", "-"))
-        self.plus_order_btn.setText(_translate("Form_gourp_btn", "+"))
 import ui.resource_rc

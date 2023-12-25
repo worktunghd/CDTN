@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
+    <width>1017</width>
     <height>962</height>
    </rect>
   </property>
@@ -352,7 +352,7 @@ QPushButton, QComboBox{
 	font-size: 15px;
 }
 
-#error_product_image, #error_quantity, #error_manufacture_date, #error_description, #error_price, #error_category, #error_product_name, #error_product_code{
+#error_user, #error_quantity, #error_manufacture_date, #error_description, #error_price, #error_category, #error_order_code, #error_product_code{
 	padding-top: 8px;
 	padding-bottom: 8px;
 }
@@ -436,6 +436,17 @@ QPlainTextEdit{
 
 #table_product_order_container{
 	border: 1px;
+}
+
+QComboBox::drop-down {
+	width: 34px;
+	min-width: 34px;
+	max-width: 34px;
+	padding: 10px;
+}
+
+#total_price_main{
+	margin-right: 20px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -525,7 +536,6 @@ QPlainTextEdit{
                   <font>
                    <family>Cambria</family>
                    <pointsize>-1</pointsize>
-                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
@@ -665,9 +675,9 @@ QPlainTextEdit{
                        <property name="geometry">
                         <rect>
                          <x>0</x>
-                         <y>0</y>
+                         <y>-323</y>
                          <width>783</width>
-                         <height>1039</height>
+                         <height>1094</height>
                         </rect>
                        </property>
                        <property name="sizePolicy">
@@ -778,7 +788,6 @@ QPlainTextEdit{
                                          <font>
                                           <family>Cambria</family>
                                           <pointsize>-1</pointsize>
-                                          <weight>50</weight>
                                           <bold>false</bold>
                                          </font>
                                         </property>
@@ -977,7 +986,6 @@ QPlainTextEdit{
                                          <font>
                                           <family>Cambria</family>
                                           <pointsize>-1</pointsize>
-                                          <weight>50</weight>
                                           <bold>false</bold>
                                          </font>
                                         </property>
@@ -1060,10 +1068,16 @@ QPlainTextEdit{
                                                <pointsize>-1</pointsize>
                                               </font>
                                              </property>
+                                             <property name="mouseTracking">
+                                              <bool>false</bool>
+                                             </property>
+                                             <property name="focusPolicy">
+                                              <enum>Qt::StrongFocus</enum>
+                                             </property>
                                              <property name="editable">
                                               <bool>true</bool>
                                              </property>
-                                             <property name="placeholderText" stdset="0">
+                                             <property name="placeholderText">
                                               <string>Tìm theo tên, số điện thoại,...</string>
                                              </property>
                                             </widget>
@@ -1112,7 +1126,7 @@ QPlainTextEdit{
                                        </widget>
                                       </item>
                                       <item>
-                                       <widget class="QLabel" name="error_user_le">
+                                       <widget class="QLabel" name="error_user">
                                         <property name="text">
                                          <string/>
                                         </property>
@@ -1158,7 +1172,7 @@ QPlainTextEdit{
                                    <property name="minimumSize">
                                     <size>
                                      <width>0</width>
-                                     <height>100</height>
+                                     <height>80</height>
                                     </size>
                                    </property>
                                    <property name="frameShape">
@@ -1177,7 +1191,7 @@ QPlainTextEdit{
                                     <number>0</number>
                                    </property>
                                    <attribute name="horizontalHeaderDefaultSectionSize">
-                                    <number>350</number>
+                                    <number>230</number>
                                    </attribute>
                                    <attribute name="horizontalHeaderStretchLastSection">
                                     <bool>true</bool>
@@ -1204,6 +1218,19 @@ QPlainTextEdit{
                                    <column>
                                     <property name="text">
                                      <string>Tài khoản</string>
+                                    </property>
+                                    <property name="font">
+                                     <font>
+                                      <family>Cambria</family>
+                                     </font>
+                                    </property>
+                                    <property name="textAlignment">
+                                     <set>AlignLeading|AlignVCenter</set>
+                                    </property>
+                                   </column>
+                                   <column>
+                                    <property name="text">
+                                     <string>Khuyến mãi</string>
                                     </property>
                                     <property name="font">
                                      <font>
@@ -1383,14 +1410,26 @@ QPlainTextEdit{
                                             <property name="cursor">
                                              <cursorShape>PointingHandCursor</cursorShape>
                                             </property>
+                                            <property name="focusPolicy">
+                                             <enum>Qt::NoFocus</enum>
+                                            </property>
                                             <property name="editable">
                                              <bool>true</bool>
                                             </property>
                                             <property name="currentText">
                                              <string/>
                                             </property>
-                                            <property name="placeholderText" stdset="0">
-                                             <string extracomment="test">Tìm kiếm theo mã, tên sản phẩm</string>
+                                            <property name="iconSize">
+                                             <size>
+                                              <width>30</width>
+                                              <height>30</height>
+                                             </size>
+                                            </property>
+                                            <property name="placeholderText">
+                                             <string>Tìm kiếm theo mã, tên sản phẩm</string>
+                                            </property>
+                                            <property name="frame">
+                                             <bool>true</bool>
                                             </property>
                                            </widget>
                                           </item>
@@ -1536,7 +1575,7 @@ QPlainTextEdit{
                                                 <bool>false</bool>
                                                </property>
                                                <property name="rowCount">
-                                                <number>2</number>
+                                                <number>0</number>
                                                </property>
                                                <property name="columnCount">
                                                 <number>4</number>
@@ -1577,8 +1616,6 @@ QPlainTextEdit{
                                                <attribute name="verticalHeaderHighlightSections">
                                                 <bool>true</bool>
                                                </attribute>
-                                               <row/>
-                                               <row/>
                                                <column>
                                                 <property name="text">
                                                  <string>Thông tin sản phẩm</string>
@@ -1629,6 +1666,13 @@ QPlainTextEdit{
                                            </widget>
                                           </item>
                                          </layout>
+                                        </widget>
+                                       </item>
+                                       <item>
+                                        <widget class="QLabel" name="error_product">
+                                         <property name="text">
+                                          <string/>
+                                         </property>
                                         </widget>
                                        </item>
                                        <item>
@@ -1771,7 +1815,6 @@ QPlainTextEdit{
                                                           <font>
                                                            <family>Cambria</family>
                                                            <pointsize>-1</pointsize>
-                                                           <weight>50</weight>
                                                            <bold>false</bold>
                                                           </font>
                                                          </property>
@@ -1794,17 +1837,34 @@ QPlainTextEdit{
                                                         </spacer>
                                                        </item>
                                                        <item>
+                                                        <widget class="QLabel" name="total_price_main">
+                                                         <property name="font">
+                                                          <font>
+                                                           <pointsize>-1</pointsize>
+                                                           <bold>false</bold>
+                                                           <underline>false</underline>
+                                                           <strikeout>true</strikeout>
+                                                          </font>
+                                                         </property>
+                                                         <property name="text">
+                                                          <string/>
+                                                         </property>
+                                                         <property name="textFormat">
+                                                          <enum>Qt::AutoText</enum>
+                                                         </property>
+                                                        </widget>
+                                                       </item>
+                                                       <item>
                                                         <widget class="QLabel" name="total_quantity_product_order">
                                                          <property name="font">
                                                           <font>
                                                            <family>Cambria</family>
                                                            <pointsize>-1</pointsize>
-                                                           <weight>50</weight>
                                                            <bold>false</bold>
                                                           </font>
                                                          </property>
                                                          <property name="text">
-                                                          <string>4.700.000đ</string>
+                                                          <string>0đ</string>
                                                          </property>
                                                         </widget>
                                                        </item>
@@ -1916,7 +1976,6 @@ QPlainTextEdit{
                                          <font>
                                           <family>Cambria</family>
                                           <pointsize>-1</pointsize>
-                                          <weight>50</weight>
                                           <bold>false</bold>
                                          </font>
                                         </property>
@@ -2106,7 +2165,7 @@ QPlainTextEdit{
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_6">
+                <spacer name="horizontalSpacer_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>

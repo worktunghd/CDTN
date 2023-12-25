@@ -19,7 +19,7 @@ alembic downgrade base
 ## Other: Update resource
 ```sh
 pyrcc5 ui/resource.qrc -o ui/resource_rc.py
-``` 
+```
 
 ## Other: Update ui
 ```sh
@@ -28,6 +28,14 @@ pyuic5 ui/admin/home.ui -o src/views/ui_generated/admin/home.py
 pyuic5 ui/admin/product_detail.ui -o src/views/ui_generated/admin/product_detail.py
 
 pyuic5 ui/admin/order_detail.ui -o src/views/ui_generated/admin/order_detail.py
+
+pyuic5 ui/admin/member_rank_detail.ui -o src/views/ui_generated/admin/member_rank_detail.py
+
+pyuic5 ui/admin/customer_detail.ui -o src/views/ui_generated/admin/customer_detail.py  
+
+pyuic5 ui/admin/supplier_detail.ui -o src/views/ui_generated/admin/supplier_detail.py 
+ 
+pyuic5 ui/admin/import_detail.ui -o src/views/ui_generated/admin/import_detail.py
 ```
 
 

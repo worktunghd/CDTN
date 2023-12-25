@@ -6,7 +6,7 @@ from src.models.category import Category
 class CategoryController(BaseController):
 
     def __init__(self):
-        super().__init__(model=Category, model_name="categories")
+        super().__init__(model=Category)
 
     def checkUserEmailOrPhone(self, username: str):
         is_valid = ''

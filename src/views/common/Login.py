@@ -96,36 +96,37 @@ class LoginWindow(QWidget):
         username = self.ui.lineEdit.text().strip()
         password = self.ui.lineEdit_2.text().strip()
 
-        ## check if input username and password.
-        # if not username and not password:
-        #     self.warning_messagebox("Vui lòng nhập tài khoản và mật khẩu để đăng nhập")
-        #     return
-        #
-        # data = {
-        #     'username': username,
-        #     'password': password
-        # }
+        # check if input username and password.
+        if not username and not password:
+            self.warning_messagebox("Vui lòng nhập tài khoản và mật khẩu để đăng nhập")
+            return
+
+        data = {
+            'username': username,
+            'password': password
+        }
 
         user_controller = UserController()
-        ## Search and check the input account information in database.
-        # result = user_controller.login(data)
-        # if result:
-        #         # pass the user_id to main window and show it.
-        #         admin_home = HomeWindow(user_id=result.id)
-        #         admin_home.show()
-        #         self.close()
-        # else:
-        #     self.warning_messagebox("Sai tài khoản hoặc mật khẩu.")
-        #     self.ui.lineEdit.clear()
-        #     self.ui.lineEdit_2.clear()
-        self.admin_home = HomeWindow(1)
+        # Search and check the input account information in database.
+        result = user_controller.login(data)
+        if result:
+                # pass the user_id to main window and show it.
+                admin_home = HomeWindow(user_id=result.id)
+                admin_home.show()
+                self.close()
+        else:
+            self.warning_messagebox("Sai tài khoản hoặc mật khẩu.")
+            # self.ui.lineEdit.clear()
+            # self.ui.lineEdit_2.clear()
+            return
+        # self.admin_home = HomeWindow(1)
+        #
+        # self.admin_home.show()
 
-        self.admin_home.show()
-
-        self.close()
+        # self.close()
 
 
-    #create new user
+
     @pyqtSlot()
     def on_createBtn_clicked(self):
         """

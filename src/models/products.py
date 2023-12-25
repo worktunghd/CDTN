@@ -11,12 +11,15 @@ class Product(Base, BaseMixin):
     # mã sản phẩm
     product_code = Column(String(255), unique=True)
     # ảnh sản phẩm
-    product_image = relationship('Image', back_populates='product')
+    product_image = relationship('Image', back_populates='product', cascade="all, delete-orphan")
     # khuyến mãi
     promotion_price = Column(DECIMAL(18, 0), default=0)
     # loại sản phẩm
-    category_id = Column(INTEGER(unsigned=True), ForeignKey('categories.id'))
-    category = relationship('Category', back_populates='product')
+    category_id = Column(INTEGER(unsigned=True), ForeignKey('categories.id', ondelete='CASCADE'))
+    category = relationship('Category', back_populates='products', single_parent=True)
+    supplier_id = Column(INTEGER(unsigned=True), ForeignKey('suppliers.id'))
+    supplier = relationship('Supplier', back_populates='products')
+    imports = relationship('Import', secondary='product_imports', back_populates='products')
     # mã phân loại sản phẩm
     item_classification = relationship('ItemClassification', back_populates='product')
     # ngày sản xuất
