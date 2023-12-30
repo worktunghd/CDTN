@@ -4,8 +4,8 @@ from sqlalchemy.dialects.mysql import INTEGER
 from .base import Base, BaseMixin
 
 # Bảng hình ảnh sản phẩm
-class Image(Base, BaseMixin):
-    __tablename__ = 'images'
+class Images(Base, BaseMixin):
+    __tablename__ = 'Images'
     image_url = Column(String(255))
-    product_id = Column(INTEGER(unsigned=True), ForeignKey('products.id', ondelete='CASCADE'))
-    product = relationship('Product', back_populates='product_image', single_parent=True)
+    product_id = Column(INTEGER(unsigned=True), ForeignKey('Products.id', ondelete='CASCADE'))
+    product = relationship('Products', back_populates='product_image', single_parent=True)

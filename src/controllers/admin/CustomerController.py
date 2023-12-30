@@ -1,18 +1,18 @@
 from src.controllers.BaseController import BaseController
 import re
-from src.models.customers import Customer
-from src.models.images import Image
+from src.models.Customers import Customers
+from src.models.Images import Images
 
 
 class CustomerController(BaseController):
 
     def __init__(self):
-        super().__init__(model=Customer)
+        super().__init__(model=Customers)
 
     def delete_customer(self, customer_id):
         try:
             self.connection.connect()
-            customer = self.connection.session.query(Customer).filter_by(id=customer_id).first()
+            customer = self.connection.session.query(Customers).filter_by(id=customer_id).first()
             customer.orders.delete()
             print(customer.orders)
         except Exception as E:

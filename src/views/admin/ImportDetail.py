@@ -7,10 +7,10 @@ from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.ProductController import ProductController
 from src.controllers.admin.SupplierController import SupplierController
-from src.controllers.admin.ImportController import ImportController
-from src.models.products import Product
-from src.models.imports import Import
-from src.models.suppliers import Supplier
+from src.controllers.admin.PurchaseOrderController import PurchaseOrderController
+from src.models.Products import Products
+from src.models.PurchaseOrders import PurchaseOrders
+from src.models.Suppliers import Suppliers
 from datetime import datetime
 from functools import partial
 
@@ -22,7 +22,7 @@ class ImportDetailWindow(QWidget):
         self.ui.setupUi(self)
         self.product_controller = ProductController()
         self.supplier_controller = SupplierController()
-        self.import_controller = ImportController()
+        self.import_controller = PurchaseOrderController()
         # khởi tạo biến
         self.selected_date = {
             'import_date': QDate.currentDate(),
@@ -70,14 +70,15 @@ class ImportDetailWindow(QWidget):
             # có chiết khấu
             if self.ui.discount_le.value() > 0:
                 # hiển thị giá gốc
-                self.original_price = sum(int(int(product.quantity) * int(product.price)) for product in self.product_selected.values())
+                self.original_price = sum(int(int(product.stock_quantity) * int(product.price)) for product in self.product_selected.values())
                 self.ui.total_price_main.setText(formatCurrency(int(self.original_price), 'đ'))
                 self.final_price = self.original_price - int(self.original_price * (int(self.ui.discount_le.value()) / 100))
                 self.ui.total_quantity_product_order.setText(formatCurrency(int(self.final_price), 'đ'))
 
             # không có khuyến mãi
             else:
-                self.original_price = sum(int(int(product.quantity) * int(product.price)) for product in self.product_selected.values())
+                self.original_price = sum(int(int(product.stock_quantity) * int(product.price)) for product in self.product_selected.values())
+                self.final_price = self.original_price
                 self.ui.total_quantity_product_order.setText(formatCurrency(int(self.original_price), 'đ'))
         except Exception as E:
             print(f"{E} \n file OrderDetail function handle_total_quantity_product_order")
@@ -103,9 +104,9 @@ class ImportDetailWindow(QWidget):
                                                             QTableWidgetItem(str(item.code)))
                     # cột tên
                     self.table_supplier_import.setItem(row_index, column_index + 1,
-                                                      QTableWidgetItem(str(item.name)))
+                                                      QTableWidgetItem(str(item.supplier_name)))
                     self.table_supplier_import.setItem(row_index, column_index + 2,
-                                                       QTableWidgetItem(str(item.phone)))
+                                                       QTableWidgetItem(str(item.phone_number)))
 
                     # cột thao tác
                     self.delete_btn = QPushButton("")
@@ -125,7 +126,7 @@ class ImportDetailWindow(QWidget):
                     row_index += 1
 
             except Exception as E:
-                print(f"{E} - file OrderDetail.py")
+                print(f"{E} - file ImportDetail.py function show_table_supplier line 128")
                 return
 
     # hàm xử lý xóa nhà cung cấp đã lựa chọn
@@ -157,6 +158,9 @@ class ImportDetailWindow(QWidget):
             self.supplier_list = self.supplier_controller.getDataByModel()
 
             # gắn dữ liệu
+            self.search_box_product_order.clear()
+            self.search_box_supplier.clear()
+
             self.search_box_product_order.addItems([item.product_code for index, item in enumerate(self.product_list)])
             self.search_box_supplier.addItems([item.code for index, item in enumerate(self.supplier_list)])
         except Exception as E:
@@ -193,7 +197,7 @@ class ImportDetailWindow(QWidget):
                     widget_price, label_price = self.generate_column_price(row_index, item)  # tạo view cột thành tiền
 
                     # cột số lượng
-                    self.table_product_import.setItem(row_index, column_index + 2, QTableWidgetItem(str(item.quantity)))
+                    self.table_product_import.setItem(row_index, column_index + 2, QTableWidgetItem(str(item.stock_quantity)))
                     # cột thành tiền
                     self.table_product_import.setCellWidget(row_index, column_index + 3, widget_price)
                     row_index += 1
@@ -313,7 +317,7 @@ class ImportDetailWindow(QWidget):
         self.label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
         # sét giá trị cột thành tiền
-        self.label.setText(formatCurrency(int(data.quantity) * int(data.price),
+        self.label.setText(formatCurrency(int(data.stock_quantity) * int(data.price),
                                           'đ'))
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setObjectName(f"label_price_{row}")
@@ -351,17 +355,17 @@ class ImportDetailWindow(QWidget):
             if is_invalid:
                 return
 
-            data = Import(code=code, import_date=import_date, delivery_date=delivery_date, original_price=self.original_price, final_price=self.final_price, status=1, description='')
+            data = PurchaseOrders(code=code, import_date=import_date, delivery_date=delivery_date, original_price=self.original_price, final_price=self.final_price, status=1, description='')
             product_relation = []
             for index, item in self.product_selected.items():
                 data.products.append(item)
-                product_relation.append(item)
+                product_relation.append({'product_id': item.id, 'import_id': import_id})
 
             for index, item in self.supplier_selected.items():
                 data.suppliers.append(item)
 
             if form_mode == FormMode.ADD.value:
-                if self.import_controller.checkExitsDataWithModel(Import.code, data=code):
+                if self.import_controller.checkExitsDataWithModel(PurchaseOrders.code, data=code):
                     self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                     self.ui.error_code.setText(messages["codeExit"])
                     self.ui.code_le.setStyleSheet(Validate.BORDER_ERROR.value)
@@ -371,7 +375,7 @@ class ImportDetailWindow(QWidget):
                 del data.products
                 del data.suppliers
                 data.id = import_id
-                if self.import_controller.checkExitsDataUpdateWithModel(Import.code, data=code,
+                if self.import_controller.checkExitsDataUpdateWithModel(PurchaseOrders.code, data=code,
                                                                          model_id=import_id):
                     self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                     self.ui.error_code.setText(messages["codeExit"])
@@ -389,6 +393,16 @@ class ImportDetailWindow(QWidget):
             return True
         except Exception as E:
             print(f'{E} - file ImportDetail.py function save_import')
+
+    def handle_delete_event(self, import_id):
+        try:
+            reply = message_box_delete()
+            if reply == QMessageBox.Yes:
+                self.import_controller.deleteDataWithModel(import_id)
+        except Exception as E:
+            print(E)
+            return False
+        return True
 
     # gán các giá trị lên form
     def handle_edit_event(self, import_id):

@@ -3,15 +3,15 @@ from PyQt5.QtCore import pyqtSlot
 from src.views.ui_generated.admin.home import Ui_MainWindow
 from src.views.common.Common import *
 from src.enums.enums import *
-from src.models.users import User
+from src.models.Employees import Employees
 from src.controllers.admin.UserController import UserController
 from src.controllers.admin.CategoryController import CategoryController
 from src.controllers.admin.ProductController import ProductController
 from src.controllers.admin.OrderController import OrderController
 from src.controllers.admin.CustomerController import CustomerController
-from src.controllers.admin.MemberRankController import MemberRankController
+from src.controllers.admin.CustomerCategoryController import CustomerCategoryController
 from src.controllers.admin.SupplierController import SupplierController
-from src.controllers.admin.ImportController import ImportController
+from src.controllers.admin.PurchaseOrderController import PurchaseOrderController
 from src.views.admin.CategoryDetail import CategoryDetailWindow
 from src.views.admin.ProductDetail import ProductDetailWindow
 from src.views.admin.OrderDetail import OrderDetailWindow
@@ -53,11 +53,11 @@ class HomeWindow(QMainWindow):
         self.product_controller = ProductController()
         self.order_controller = OrderController()
         self.customer_controller = CustomerController()
-        self.member_rank_controller = MemberRankController()
+        self.member_rank_controller = CustomerCategoryController()
         self.supplier_controller = SupplierController()
-        self.import_controller = ImportController()
+        self.import_controller = PurchaseOrderController()
         # lấy thông tin user
-        self.USER = self.user_controller.getDataByIdWithModel(user_id)
+        self.EMPLOYEE = self.user_controller.getDataByIdWithModel(user_id)
 
         # khởi tạo table
         self.user_table = self.ui.tableUser
@@ -182,24 +182,25 @@ class HomeWindow(QMainWindow):
 
     # kiểm tra quyền để ẩn/hiện menu tương ứng
     def check_permission(self):
-        if self.USER.level == UserRole.EMPLOYEE.value:
-            self.hideAllMenu()
-            self.ui.products_btn_2.setVisible(True)
-            self.ui.orders_btn_2.setVisible(True)
-            self.ui.rank_btn_2.setVisible(True)
-            self.ui.customers_btn_2.setVisible(True)
-            self.ui.category_btn_2.setVisible(True)
-        elif self.USER.level == UserRole.WAREHOUSE_EMPLOYEE.value:
-            self.hideAllMenu()
-            self.ui.products_btn_2.setVisible(True)
-            self.ui.orders_btn_2.setVisible(True)
-            self.ui.rank_btn_2.setVisible(True)
-            self.ui.customers_btn_2.setVisible(True)
-            self.ui.category_btn_2.setVisible(True)
-            self.ui.supplier_btn_2.setVisible(True)
-            self.ui.purcharse_order_btn_2.setVisible(True)
-        else:
-            self.openAllMenu()
+        if self.EMPLOYEE:
+            if self.EMPLOYEE.role == UserRole.EMPLOYEE.value:
+                self.hideAllMenu()
+                self.ui.products_btn_2.setVisible(True)
+                self.ui.orders_btn_2.setVisible(True)
+                self.ui.rank_btn_2.setVisible(True)
+                self.ui.customers_btn_2.setVisible(True)
+                self.ui.category_btn_2.setVisible(True)
+            elif self.EMPLOYEE and self.EMPLOYEE.role == UserRole.WAREHOUSE_EMPLOYEE.value:
+                self.hideAllMenu()
+                self.ui.products_btn_2.setVisible(True)
+                self.ui.orders_btn_2.setVisible(True)
+                self.ui.rank_btn_2.setVisible(True)
+                self.ui.customers_btn_2.setVisible(True)
+                self.ui.category_btn_2.setVisible(True)
+                self.ui.supplier_btn_2.setVisible(True)
+                self.ui.purcharse_order_btn_2.setVisible(True)
+            else:
+                self.openAllMenu()
 
     # ẩn toàn bộ menu
     def hideAllMenu(self):
@@ -539,7 +540,7 @@ class HomeWindow(QMainWindow):
                 self.user_table.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
                 self.user_table.setItem(index, column_index + 1, QTableWidgetItem(str(item.id)))
                 self.user_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.username)))
-                self.user_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.name)))
+                self.user_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.employee_name)))
                 widget, edit_btn, delete_btn = generate_action_row(item.id, "user")
                 edit_btn.clicked.connect(
                     lambda: self.on_row_click(FormMode.EDIT.value, self.page_index["USER_PAGE_DETAIL"],
@@ -566,7 +567,7 @@ class HomeWindow(QMainWindow):
                 self.product_table.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
                 self.product_table.setItem(index, column_index + 1, QTableWidgetItem(str(item.product_code)))
                 self.product_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.product_name)))
-                self.product_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.quantity)))
+                self.product_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.stock_quantity)))
                 self.product_table.setItem(index, column_index + 4, QTableWidgetItem(str(formatCurrency(int(item.price), 'đ'))))
                 widget, edit_btn, delete_btn = generate_action_row(item.id, "product")
                 edit_btn.clicked.connect(
@@ -584,19 +585,20 @@ class HomeWindow(QMainWindow):
             # độ rộng cột
             self.order_table.setColumnWidth(0, 40)
             self.order_table.setColumnWidth(1, 150)
-            self.order_table.setColumnWidth(2, 250)
-            self.order_table.setColumnWidth(3, 200)
-            self.order_table.setColumnWidth(4, 180)
-            self.order_table.setColumnWidth(5, 180)
+            self.order_table.setColumnWidth(2, 220)
+            self.order_table.setColumnWidth(3, 170)
+            self.order_table.setColumnWidth(4, 160)
+            self.order_table.setColumnWidth(5, 160)
             if order_list:
                 for index, item in enumerate(order_list):
                     column_index = 0
                     self.order_table.setRowCount(index + 1)
-                    self.order_table.setItem(index, column_index, QTableWidgetItem(str(item.order_code)))
-                    self.order_table.setItem(index, column_index + 1, QTableWidgetItem(str(item.customer.name)))
-                    self.order_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.customer.account)))
-                    self.order_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.quantity)))
-                    self.order_table.setItem(index, column_index + 4,
+                    self.order_table.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
+                    self.order_table.setItem(index, column_index + 1, QTableWidgetItem(str(item.order_code)))
+                    self.order_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.customer.customer_name)))
+                    self.order_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.customer.phone_number)))
+                    self.order_table.setItem(index, column_index + 4, QTableWidgetItem(str(item.quantity)))
+                    self.order_table.setItem(index, column_index + 5,
                                              QTableWidgetItem(str(formatCurrency(int(item.final_price), 'đ'))))
                     widget, edit_btn, delete_btn = generate_action_row(item.id, "order")
                     edit_btn.clicked.connect(
@@ -605,7 +607,7 @@ class HomeWindow(QMainWindow):
                     delete_btn.clicked.connect(
                         lambda: self.on_row_click(FormMode.DELETE.value,
                                                   self.page_index["ORDER_PAGE_DETAIL"], self.order_widget_detail, "order"))
-                    self.order_table.setCellWidget(index, column_index + 5, widget)
+                    self.order_table.setCellWidget(index, column_index + 6, widget)
         except Exception as E:
             print(E)
             return
@@ -625,8 +627,8 @@ class HomeWindow(QMainWindow):
                 self.customer_table.setRowCount(index + 1)
                 self.customer_table.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
                 self.customer_table.setItem(index, column_index + 1, QTableWidgetItem(str(item.id)))
-                self.customer_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.name)))
-                self.customer_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.account)))
+                self.customer_table.setItem(index, column_index + 2, QTableWidgetItem(str(item.customer_name)))
+                self.customer_table.setItem(index, column_index + 3, QTableWidgetItem(str(item.phone_number)))
                 widget, edit_btn, delete_btn = generate_action_row(item.id, "customer")
                 edit_btn.clicked.connect(
                     lambda: self.on_row_click(FormMode.EDIT.value,
@@ -645,18 +647,18 @@ class HomeWindow(QMainWindow):
         self.table_rank.setColumnWidth(0, 40)
         self.table_rank.setColumnWidth(1, 200)
         self.table_rank.setColumnWidth(2, 300)
-        self.table_rank.setColumnWidth(3, 200)
-        self.table_rank.setColumnWidth(4, 200)
+        self.table_rank.setColumnWidth(3, 180)
+        self.table_rank.setColumnWidth(4, 180)
         if member_rank_list:
             for index, item in enumerate(member_rank_list):
                 column_index = 0
                 self.table_rank.setRowCount(index + 1)
                 self.table_rank.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
                 self.table_rank.setItem(index, column_index + 1, QTableWidgetItem(str(item.code)))
-                self.table_rank.setItem(index, column_index + 2, QTableWidgetItem(str(item.name)))
+                self.table_rank.setItem(index, column_index + 2, QTableWidgetItem(str(item.category_name)))
                 self.table_rank.setItem(index, column_index + 3,
-                                        QTableWidgetItem(str(formatCurrency(int(item.spending), 'đ'))))
-                self.table_rank.setItem(index, column_index + 4, QTableWidgetItem(str(item.discount)))
+                                        QTableWidgetItem(str(formatCurrency(int(item.min_spending), 'đ'))))
+                self.table_rank.setItem(index, column_index + 4, QTableWidgetItem(str(item.discount_percentage)))
                 widget, edit_btn, delete_btn = generate_action_row(item.id, "member_rank")
                 edit_btn.clicked.connect(
                     lambda: self.on_row_click(FormMode.EDIT.value,
@@ -683,11 +685,11 @@ class HomeWindow(QMainWindow):
                 self.table_supplier.setRowCount(index + 1)
                 self.table_supplier.setItem(index, column_index, QTableWidgetItem(str(index + 1)))
                 self.table_supplier.setItem(index, column_index + 1, QTableWidgetItem(str(item.code)))
-                self.table_supplier.setItem(index, column_index + 2, QTableWidgetItem(str(item.name)))
+                self.table_supplier.setItem(index, column_index + 2, QTableWidgetItem(str(item.supplier_name)))
                 # cột số điện thoại
-                if not item.phone:
-                    item.phone = 'Chưa thiết lập'
-                self.table_supplier.setItem(index, column_index + 3, QTableWidgetItem(str(item.phone)))
+                if not item.phone_number:
+                    item.phone_number = 'Chưa thiết lập'
+                self.table_supplier.setItem(index, column_index + 3, QTableWidgetItem(str(item.phone_number)))
                 # cột địa chỉ
                 if not item.address:
                     item.address = 'Chưa thiết lập'

@@ -7,8 +7,8 @@ from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.ProductController import ProductController
 from src.controllers.admin.CategoryController import CategoryController
-from src.models.products import Product
-from src.models.images import Image
+from src.models.Products import Products
+from src.models.Images import Images
 from datetime import datetime
 import shutil
 
@@ -44,8 +44,8 @@ class ProductDetailWindow(QWidget):
 
     def showEvent(self, event):
         self.category = self.category_controller.getDataByModel()
+        self.combobox_category.clear()
         if self.category:
-            self.combobox_category.clear()
             for item in self.category:
                 self.combobox_category.addItem(item.category_name)
         else:
@@ -53,7 +53,8 @@ class ProductDetailWindow(QWidget):
 
     # xử lý khi chọn loại sản phẩm
     def handle_category_selected(self, index):
-        self.category_selected = self.category[index]
+        if self.combobox_category.currentText() != "Không có dữ liệu":
+            self.category_selected = self.category[index]
 
     # xử lý chọn ảnh sản phẩm
     @pyqtSlot()
@@ -151,11 +152,13 @@ class ProductDetailWindow(QWidget):
         # Đường dẫn đến thư mục đích
         new_file_name = generate_unique_filename(product_image)
         destination_path = os.path.join(destination_folder, new_file_name)
-        product = Product(product_code=product_code, product_name=product_name, price=price, quantity=quantity, description=description, manufacture_date=manufacture_date, category_id=self.category_selected.id)
-        image = Image(image_url=destination_path)
+        print(self.category_selected)
+        product = Products(product_code=product_code, product_name=product_name, price=price, stock_quantity=quantity, description=description, manufacture_date=manufacture_date, category_id=self.category_selected.id)
+        image = Images(image_url=destination_path)
         product.product_image = [image]
+        print(1)
         if form_mode == FormMode.ADD.value:
-            if self.product_controller.checkExitsDataWithModel(Product.product_code, data=product_code):
+            if self.product_controller.checkExitsDataWithModel(Products.product_code, data=product_code):
                 self.ui.error_product_code.setStyleSheet(color_text_error)
                 self.ui.error_product_code.setText(messages["product_codeExit"])
                 self.ui.product_code_le.setStyleSheet(border_error)
@@ -165,7 +168,7 @@ class ProductDetailWindow(QWidget):
                 shutil.copy(self.product_image, destination_path)
             self.product_controller.insertData(product)
         elif form_mode == FormMode.EDIT.value:
-            if self.product_controller.checkExitsDataUpdateWithModel(Product.product_code, data=product_code, model_id=product_id):
+            if self.product_controller.checkExitsDataUpdateWithModel(Products.product_code, data=product_code, model_id=product_id):
                 self.ui.error_product_code.setStyleSheet(color_text_error)
                 self.ui.error_product_code.setText(messages["product_codeExit"])
                 self.ui.product_code_le.setStyleSheet(border_error)
@@ -173,20 +176,23 @@ class ProductDetailWindow(QWidget):
             if self.product_image:
                 # di chuyển ảnh vào thư mục dự án
                 shutil.copy(self.product_image, destination_path)
-            self.product_controller.updateDataWithModel(data={'product_name': product_name, 'product_code': product_code, 'price': price, 'quantity': quantity, 'description': description, 'manufacture_date': manufacture_date, 'category_id': self.category_selected.id}, model_id=product_id)
+            self.product_controller.updateDataWithModel(data={'product_name': product_name, 'product_code': product_code, 'price': price, 'stock_quantity': quantity, 'description': description, 'manufacture_date': manufacture_date, 'category_id': self.category_selected.id}, model_id=product_id)
         else:
             return
 
         return True
 
+    def handle_delete_event(self, product_id):
+        print(1)
+
     # gán các giá trị lên form
-    def handle_edit_event(self, category_id):
-        product = self.product_controller.getDataByIdWithModel(category_id)
+    def handle_edit_event(self, product_id):
+        product = self.product_controller.getDataByIdWithModel(product_id)
         if product:
             self.ui.product_code_le.setText(product.product_code)
             self.ui.product_name_le.setText(product.product_name)
             self.ui.price_le.setValue(int(product.price))
-            self.ui.quantity_le.setValue(int(product.quantity))
+            self.ui.quantity_le.setValue(int(product.stock_quantity))
             self.selected_date = product.manufacture_date
             # loại sản phẩm
             self.category_selected = product.category

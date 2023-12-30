@@ -102,30 +102,30 @@ class BaseController:
                         warningMessagebox("Đã xảy ra lỗi")
                         return
 
-                # xử lý cập nhât, thêm mới cho các bản ghi khác
-                for other in other_data:
-                    action = other.get('action', None)
-                    data = other.get('data', [])
-                    data_dict = []
-                    other_model = None
-                    if isinstance(data, dict):
-                        data = list(data.values())
-                    for item in data:
-                        other_model = item.__class__
-                        item_dict = vars(item)
-                        item_dict.pop('_sa_instance_state', None)
-                        data_dict.append(item_dict)
-                    if action == FormMode.ADD.value and other_model:
-                        print(1)
-                    elif action == FormMode.EDIT.value and other_model:
-                        # update data
-                        self.connection.session.bulk_update_mappings(other_model, data_dict)
+                # # xử lý cập nhât, thêm mới cho các bản ghi khác
+                # for other in other_data:
+                #     action = other.get('action', None)
+                #     data = other.get('data', [])
+                #     data_dict = []
+                #     other_model = None
+                #     if isinstance(data, dict):
+                #         data = list(data.values())
+                #     for item in data:
+                #         other_model = item.__class__
+                #         item_dict = vars(item)
+                #         item_dict.pop('_sa_instance_state', None)
+                #         data_dict.append(item_dict)
+                #     if action == FormMode.ADD.value and other_model:
+                #         print(1)
+                #     elif action == FormMode.EDIT.value and other_model and data_dict:
+                #         # update data
+                #         self.connection.session.bulk_update_mappings(other_model, data_dict)
 
                 self.connection.session.commit()
                 return True
 
         except SQLAlchemyError as e:
-            print(e)
+            print(f"{e} - file BaseController function updateDataWithModelRelation")
             self.connection.session.rollback()
             raise e
 
@@ -146,11 +146,13 @@ class BaseController:
                 else:
                     insert.append(item)
             # update data
-            self.connection.session.bulk_update_mappings(relation_model, update)
+            if update:
+                self.connection.session.bulk_update_mappings(relation_model, update)
             # delete data
             self.connection.session.query(relation_model).filter(relation_model.id.in_((list(data_old.keys())))).delete()
             # insert data
-            self.connection.session.bulk_insert_mappings(relation_model, insert)
+            if insert:
+                self.connection.session.bulk_insert_mappings(relation_model, insert)
         except Exception as E:
             print(f"{E} - file BaseController function process_relation_with_request")
             return

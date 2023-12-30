@@ -7,8 +7,7 @@ from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.CustomerController import CustomerController
 from src.controllers.admin.UserController import UserController
-from src.models.users import User
-from src.models.images import Image
+from src.models.Employees import Employees
 import shutil
 
 class UserDetailWindow(QWidget):
@@ -18,6 +17,9 @@ class UserDetailWindow(QWidget):
         self.ui.setupUi(self)
         # khởi tạo controller
         self.user_controller = UserController()
+
+    def showEvent(self, a0):
+        self.ui.dialogTitleUser.setText("Thêm mới tài khoản")
 
     @pyqtSlot()
     def save_user(self, form_mode, user_id=None):
@@ -66,26 +68,28 @@ class UserDetailWindow(QWidget):
                 self.ui.error_username.setText(messages["usernameExit"])
                 self.ui.username_le.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                 return
-            user = User(name=name, username=username, password=password, level=level)
-            user_controller.saveUser(user=user)
+            employee = Employees(employee_name=name, username=username, password=password, role=level)
+            user_controller.saveUser(user=employee)
         elif form_mode == FormMode.EDIT.value:
-            if user_controller.checkExitsUserUpdate(username=username, user_id=user_id):
+            if user_controller.checkExitsUserUpdate(username=username, employee_id=user_id):
                 self.ui.error_username.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                 self.ui.error_username.setText(messages["usernameExit"])
                 self.ui.username_le.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                 return
-            user = {'username': username, 'name': name, 'password': password, 'level': level}
-            user_controller.updateUserWithModel(data=user, user_id=user_id)
+            employee = {'username': username, 'employee_name': name, 'password': password, 'role': level}
+            user_controller.updateUserWithModel(data=employee, employee_id=user_id)
         return True
 
     # gán các giá trị lên form
     def handle_edit_event(self, user_id):
+        self.ui.dialogTitleUser.setText("Cập nhật tài khoản")
         user = self.user_controller.getDataByIdWithModel(user_id)
         if user:
-            self.ui.name_le.setText(user.name)
+            self.ui.name_le.setText(user.employee_name)
             self.ui.username_le.setText(user.username)
             self.ui.password_le.setText(user.password)
             self.ui.confirm_le.setText(user.password)
+            self.ui.level.setCurrentIndex(int(user.role))
 
     # xử lý xóa
     def handle_delete_event(self, user_id):

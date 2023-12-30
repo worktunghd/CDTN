@@ -5,12 +5,12 @@ from sqlalchemy.dialects.mysql import INTEGER
 
 
 # Bảng nhập hàng
-class Import(Base, BaseMixin):
-    __tablename__ = 'imports'
+class PurchaseOrders(Base, BaseMixin):
+    __tablename__ = 'PurchaseOrders'
     # mã
     code = Column(String(255), unique=True)
-    suppliers = relationship('Supplier', secondary='supplier_imports', back_populates='imports')
-    products = relationship('Product', secondary='product_imports', back_populates='imports')
+    suppliers = relationship('Suppliers', secondary='SupplierPurchaseOrders', back_populates='imports')
+    products = relationship('Products', secondary='ProductPurchaseOrders', back_populates='imports')
     # ngày nhập
     import_date = Column(DateTime(timezone=True))
     # ngày giao

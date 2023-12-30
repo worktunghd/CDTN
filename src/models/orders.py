@@ -5,14 +5,14 @@ from sqlalchemy.dialects.mysql import INTEGER
 
 
 # Bảng sản phẩm
-class Order(Base, BaseMixin):
-    __tablename__ = 'orders'
+class Orders(Base, BaseMixin):
+    __tablename__ = 'Orders'
     # mã đơn hàng
     order_code = Column(String(255), unique=True)
-    customer_id = Column(INTEGER(unsigned=True), ForeignKey('customers.id', ondelete='CASCADE'))
+    customer_id = Column(INTEGER(unsigned=True), ForeignKey('Customers.id', ondelete='CASCADE'))
     # người đặt
-    customer = relationship('Customer', back_populates='orders', single_parent=True)
-    order_details = relationship('OrderDetail', back_populates='order', cascade="all, delete-orphan")
+    customer = relationship('Customers', back_populates='orders', single_parent=True)
+    order_details = relationship('OrderDetails', back_populates='order', cascade="all, delete-orphan")
     # tổng giá tiền
     original_price = Column(String(255))
     discount = Column(INTEGER, default=0)

@@ -5,15 +5,15 @@ from sqlalchemy.dialects.mysql import INTEGER
 
 
 # Bảng nhà cung cấp
-class Supplier(Base, BaseMixin):
-    __tablename__ = 'suppliers'
+class Suppliers(Base, BaseMixin):
+    __tablename__ = 'Suppliers'
     # mã
     code = Column(String(255), unique=True)
     # tên nhà cung cấp
-    name = Column(String(255))
+    supplier_name = Column(String(255))
     # số điện thoại
-    phone = Column(String(255), nullable=True)
+    phone_number = Column(String(255), nullable=True)
     # địa chỉ
     address = Column(String(255), nullable=True)
-    products = relationship('Product', back_populates='supplier', cascade="all, delete-orphan")
-    imports = relationship('Import', secondary='supplier_imports', back_populates='suppliers')
+    products = relationship('Products', back_populates='supplier', cascade="all, delete-orphan")
+    imports = relationship('PurchaseOrders', secondary='SupplierPurchaseOrders', back_populates='suppliers')

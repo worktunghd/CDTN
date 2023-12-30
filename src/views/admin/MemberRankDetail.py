@@ -6,9 +6,8 @@ import os
 from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.CustomerController import CustomerController
-from src.controllers.admin.MemberRankController import MemberRankController
-from src.models.member_ranks import MemberRank
-from src.models.images import Image
+from src.controllers.admin.CustomerCategoryController import CustomerCategoryController
+from src.models.CustomerCategories import CustomerCategories
 import shutil
 
 class MemberRankDetailWindow(QWidget):
@@ -18,20 +17,14 @@ class MemberRankDetailWindow(QWidget):
         self.ui.setupUi(self)
         # khởi tạo controller
         self.customer_controller = CustomerController()
-        self.member_rank_controller = MemberRankController()
+        self.member_rank_controller = CustomerCategoryController()
 
 
-    # def showEvent(self, event):
-    #     self.category = self.category_controller.getDataByModel()
-    #     if self.category:
-    #         self.combobox_category.clear()
-    #         for item in self.category:
-    #             self.combobox_category.addItem(item.category_name)
-    #     else:
-    #         self.combobox_category.addItem("Không có dữ liệu")
+    def showEvent(self, event):
+        self.ui.dialogTitleUser.setText('Thêm mới hạng thành viên')
 
     @pyqtSlot()
-    def save_member_rank(self, form_mode, customer_id=None):
+    def save_member_rank(self, form_mode, customer_categories_id=None):
         code = self.ui.code_le.text().strip()
         name = self.ui.name_le.text().strip()
         spending = self.ui.spending_le.value()
@@ -62,21 +55,23 @@ class MemberRankDetailWindow(QWidget):
 
         if is_valid:
             return
-        member_rank = MemberRank(code=code, name=name, spending=spending, discount=discount)
+        member_rank = CustomerCategories(code=code, category_name=name, min_spending=spending, discount_percentage=discount)
         try:
             if form_mode == FormMode.ADD.value:
-                if self.member_rank_controller.checkExitsDataWithModel(MemberRank.code, data=code):
+                if self.member_rank_controller.checkExitsDataWithModel(CustomerCategories.code, data=code):
                     self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                     self.ui.error_code.setText(messages["codeExit"])
                     self.ui.code_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
                 self.member_rank_controller.insertData(member_rank)
             elif form_mode == FormMode.EDIT.value:
-                if self.customer_controller.checkExitsDataUpdateWithModel(Customer.account, data=account, model_id=customer_id):
-                    self.ui.error_account.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
-                    self.ui.error_account.setText(messages["accountExit"])
-                    self.ui.account_le.setStyleSheet(Validate.BORDER_ERROR.value)
+                if self.member_rank_controller.checkExitsDataUpdateWithModel(CustomerCategories.code, data=code, model_id=customer_categories_id):
+                    self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
+                    self.ui.error_code.setText(messages["accountExit"])
+                    self.ui.code_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
+                self.member_rank_controller.updateDataWithModel(data={'code': code, 'category_name': name, 'min_spending': spending, 'discount_percentage': discount},
+                                                             model_id=customer_categories_id)
             else:
                 return
         except Exception as E:
@@ -86,13 +81,14 @@ class MemberRankDetailWindow(QWidget):
         return True
 
     # gán các giá trị lên form
-    def handle_edit_event(self, member_rank_id):
-        rank = self.member_rank_controller.getDataByIdWithModel(member_rank_id)
+    def handle_edit_event(self, customer_categories_id):
+        self.ui.dialogTitleUser.setText('Cập nhật hạng thành viên')
+        rank = self.member_rank_controller.getDataByIdWithModel(customer_categories_id)
         if rank:
-            self.ui.name_le.setText(rank.name)
+            self.ui.name_le.setText(rank.category_name)
             self.ui.code_le.setText(rank.code)
-            self.ui.spending_le.setValue(int(rank.spending))
-            self.ui.discount_le.setValue(int(rank.discount))
+            self.ui.spending_le.setValue(int(rank.min_spending))
+            self.ui.discount_le.setValue(int(rank.discount_percentage))
 
     # clear dữ liệu trên form
     def clear_form(self):
@@ -112,11 +108,11 @@ class MemberRankDetailWindow(QWidget):
         self.ui.error_spending.setText("")
         self.ui.error_discount.setText("")
 
-    def handle_delete_event(self, member_rank_id):
+    def handle_delete_event(self, customer_categories_id):
         try:
             reply = message_box_delete()
             if reply == QMessageBox.Yes:
-                self.category_controller.deleteDataWithModel(member_rank_id)
+                self.member_rank_controller.deleteDataWithModel(customer_categories_id)
         except Exception as E:
             print(E)
             return False

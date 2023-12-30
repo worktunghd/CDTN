@@ -7,7 +7,7 @@ from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.UserController import UserController
 from src.controllers.admin.SupplierController import SupplierController
-from src.models.suppliers import Supplier
+from src.models.Suppliers import Suppliers
 from src.views.common.form_group_btn_order import Test
 
 
@@ -50,24 +50,24 @@ class SupplierDetailWindow(QWidget):
         if is_valid:
             return
 
-        supplier = Supplier(code=code, name=name, phone=phone, address=address)
+        supplier = Suppliers(code=code, supplier_name=name, phone_number=phone, address=address)
 
         try:
             if form_mode == FormMode.ADD.value:
-                if self.supplier_controller.checkExitsDataWithModel(Supplier.code, data=code):
+                if self.supplier_controller.checkExitsDataWithModel(Suppliers.code, data=code):
                     self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                     self.ui.error_code.setText(messages["codeExit"])
                     self.ui.code_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
                 self.supplier_controller.insertData(supplier)
             elif form_mode == FormMode.EDIT.value:
-                if self.order_controller.checkExitsDataUpdateWithModel(Supplier.code, data=code,
+                if self.supplier_controller.checkExitsDataUpdateWithModel(Suppliers.code, data=code,
                                                                        model_id=supplier_id):
                     self.ui.error_code.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
                     self.ui.error_code.setText(messages["codeExit"])
                     self.ui.code_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
-                data = {'code': code, 'name': name, 'phone': phone, 'address': address}
+                data = {'code': code, 'supplier_name': name, 'phone_number': phone, 'address': address}
                 self.supplier_controller.updateDataWithModel(data=data, model_id=supplier_id)
 
             else:
@@ -85,8 +85,8 @@ class SupplierDetailWindow(QWidget):
         supplier = self.supplier_controller.getDataByModelIdWithRelation(supplier_id)
         if supplier:
             self.ui.code_le.setText(supplier.code)
-            self.ui.name_le.setText(supplier.name)
-            self.ui.phone_le.setText(supplier.phone)
+            self.ui.name_le.setText(supplier.supplier_name)
+            self.ui.phone_le.setText(supplier.phone_number)
             self.ui.address_le.setText(supplier.address)
 
     # clear dữ liệu trên form

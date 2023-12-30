@@ -4,7 +4,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool, create_engine
 from sqlalchemy.orm import sessionmaker
 import configparser
-from src.models.users import User
+from src.models.Employees import Employees
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -87,11 +87,11 @@ def seeder_user():
         # tạo 1 tài khoản mặc định
         connection = engine.connect()
         session = Session()
-        session.add(User(username='0912229762', name='admin', password='1', level=2))
+        session.add(Employees(username='0912229762', employee_name='admin', password='1', role=2))
         session.commit()
 
     except Exception as E:
-
+        print(E)
         print("Không thể kết nối được database")
 
     finally:

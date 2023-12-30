@@ -1,12 +1,12 @@
 from src.controllers.BaseController import BaseController
 import re
-from src.models.category import Category
+from src.models.Categories import Categories
 
 
 class CategoryController(BaseController):
 
     def __init__(self):
-        super().__init__(model=Category)
+        super().__init__(model=Categories)
 
     def checkUserEmailOrPhone(self, username: str):
         is_valid = ''

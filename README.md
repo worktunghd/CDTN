@@ -41,7 +41,11 @@ pyuic5 ui/admin/import_detail.ui -o src/views/ui_generated/admin/import_detail.p
 
 
 ## Other: Lưu thay đổi của database
+1.
 ```sh
 alembic revision --autogenerate -m "first commit"
-
+```
+2. fix 1 số lỗi
+```sh
+pip install --upgrade pip setuptools
 ```

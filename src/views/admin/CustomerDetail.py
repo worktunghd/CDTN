@@ -7,8 +7,7 @@ from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.CustomerController import CustomerController
 from src.controllers.admin.UserController import UserController
-from src.models.customers import Customer
-from src.models.images import Image
+from src.models.Customers import Customers
 import shutil
 
 class CustomerDetailWindow(QWidget):
@@ -76,21 +75,21 @@ class CustomerDetailWindow(QWidget):
     @pyqtSlot()
     def save_customer(self, form_mode, customer_id=None):
         name = self.ui.name_le.text().strip()
-        account = self.ui.account_le.text().strip()
+        phone_number = self.ui.account_le.text().strip()
         self.clear_error()
 
         messages = {
             'nameEmpty': "Vui lòng nhập họ và tên.",
-            'accountEmpty': "Vui lòng nhập thông tin tài khoản.",
-            'accountExit': "Tài khoản đã tồn tại",
+            'phone_numberEmpty': "Vui lòng nhập thông tin tài khoản.",
+            'phone_numberExit': "Tài khoản đã tồn tại",
         }
         # validate dữ liệu các cột không được trống
-        is_valid = validateEmpty(self, {'name': name, 'account': account}, messages)
+        is_valid = validateEmpty(self, {'name': name, 'phone_number': phone_number}, messages)
         if is_valid:
             return
 
-        customer = Customer(name=name, account=account)
-        message = self.user_controller.checkUserEmailOrPhone(username=account)
+        customer = Customers(customer_name=name, phone_number=phone_number)
+        message = self.user_controller.checkUserEmailOrPhone(username=phone_number)
         if message:
             self.ui.error_account.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
             self.ui.error_account.setText(message)
@@ -98,31 +97,20 @@ class CustomerDetailWindow(QWidget):
             return
         try:
             if form_mode == FormMode.ADD.value:
-                if self.customer_controller.checkExitsDataWithModel(Customer.account, data=account):
+                if self.customer_controller.checkExitsDataWithModel(Customers.phone_number, data=phone_number):
                     self.ui.error_account.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
-                    self.ui.error_account.setText(messages["accountExit"])
+                    self.ui.error_account.setText(messages["phone_numberExit"])
                     self.ui.account_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
                 self.customer_controller.insertData(customer)
             elif form_mode == FormMode.EDIT.value:
-                if self.customer_controller.checkExitsDataUpdateWithModel(Customer.account, data=account, model_id=customer_id):
+                if self.customer_controller.checkExitsDataUpdateWithModel(Customers.phone_number, data=phone_number, model_id=customer_id):
                     self.ui.error_account.setStyleSheet(Validate.COLOR_TEXT_ERROR.value)
-                    self.ui.error_account.setText(messages["accountExit"])
+                    self.ui.error_account.setText(messages["phone_numberExit"])
                     self.ui.account_le.setStyleSheet(Validate.BORDER_ERROR.value)
                     return
-                # self.order_controller.updateDataWithModelRelation(
-                #     order,
-                #     {
-                #         'order_details': self.order_details,
-                #     },
-                #     [
-                #         {
-                #             'action': FormMode.EDIT.value,
-                #             'data': self.product_update,
-                #         }
-                #     ]
-                # )
-
+                self.customer_controller.updateDataWithModel(data={'customer_name': name, 'phone_number': phone_number},
+                                                             model_id=customer_id)
             else:
                 return
         except Exception as E:
@@ -135,8 +123,8 @@ class CustomerDetailWindow(QWidget):
     def handle_edit_event(self, customer_id):
         customer = self.customer_controller.getDataByIdWithModel(customer_id)
         if customer:
-            self.ui.name_le.setText(customer.name)
-            self.ui.account_le.setText(customer.account)
+            self.ui.name_le.setText(customer.customer_name)
+            self.ui.account_le.setText(customer.phone_number)
 
     # clear dữ liệu trên form
     def clear_form(self):

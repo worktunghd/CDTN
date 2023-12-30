@@ -3,9 +3,10 @@ from .base import Base, BaseMixin
 from sqlalchemy.orm import relationship
 from src.enums.enums import UserRole
 
-class User(Base, BaseMixin):
-    __tablename__ = 'users'
+class Employees(Base, BaseMixin):
+    __tablename__ = 'Employees'
     username = Column(String(255), unique=True)
-    name = Column(String(255))
+    citizen_id = Column(String(255), unique=True, nullable=True)
+    employee_name = Column(String(255))
     password = Column(String(255))
-    level = Column(INTEGER, default=UserRole.EMPLOYEE.value)
+    role = Column(INTEGER, default=UserRole.EMPLOYEE.value)

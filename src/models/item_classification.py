@@ -9,7 +9,7 @@ class ItemClassification(Base, BaseMixin):
     __tablename__ = 'item_classifications'
     # tên phân loại
     item_classification_name = Column(String(255), unique=True)
-    product_id = Column(INTEGER(unsigned=True), ForeignKey('products.id'))
-    product = relationship('Product', back_populates='item_classification')
+    product_id = Column(INTEGER(unsigned=True), ForeignKey('Products.id'))
+    product = relationship('Products', back_populates='item_classification')
     sub_item_classifications = relationship('SubItemClassification', back_populates='item_classification')
 

@@ -8,7 +8,7 @@ from src.views.common.Common import *
 from src.enums.enums import *
 from src.views.common.Common import *
 from src.controllers.admin.CategoryController import CategoryController
-from src.models.category import Category
+from src.models.Categories import Categories
 
 
 class CategoryDetailWindow(QWidget):
@@ -40,14 +40,14 @@ class CategoryDetailWindow(QWidget):
             return
         try:
             if form_mode == FormMode.ADD.value:
-                if self.category_controller.checkExitsDataWithModel(Category.category_name, data=category_name):
+                if self.category_controller.checkExitsDataWithModel(Categories.category_name, data=category_name):
                     self.ui.error_category_name.setStyleSheet(color_style)
                     self.ui.error_category_name.setText(messages["category_nameExit"])
                     self.ui.category_name_le.setStyleSheet(border_style)
                     return
-                self.category_controller.insertData(Category(category_name=category_name))
+                self.category_controller.insertData(Categories(category_name=category_name))
             elif form_mode == FormMode.EDIT.value:
-                if self.category_controller.checkExitsDataUpdateWithModel(Category.category_name, data=category_name, model_id=category_id):
+                if self.category_controller.checkExitsDataUpdateWithModel(Categories.category_name, data=category_name, model_id=category_id):
                     self.ui.error_category_name.setStyleSheet(color_style)
                     self.ui.error_category_name.setText(messages["category_nameExit"])
                     self.ui.category_name_le.setStyleSheet(border_style)

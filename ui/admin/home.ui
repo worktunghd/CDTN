@@ -658,7 +658,7 @@ QPushButton{
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="text">
-            <string>Nhân viên</string>
+            <string>Tài khoản</string>
            </property>
            <property name="iconSize">
             <size>
@@ -1198,7 +1198,7 @@ QPushButton{
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>5</number>
+          <number>8</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QGridLayout" name="gridLayout_2">
@@ -1303,6 +1303,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -1668,6 +1669,7 @@ QPushButton{
                        </property>
                        <property name="font">
                         <font>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>
@@ -1813,6 +1815,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -2169,6 +2172,7 @@ QPushButton{
                        </property>
                        <property name="font">
                         <font>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>
@@ -2311,6 +2315,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -2587,7 +2592,7 @@ QPushButton{
                        <number>5</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </attribute>
                       <attribute name="horizontalHeaderCascadingSectionResizes">
                        <bool>false</bool>
@@ -2630,6 +2635,7 @@ QPushButton{
                        </property>
                        <property name="font">
                         <font>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>
@@ -2775,6 +2781,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -3080,7 +3087,7 @@ QPushButton{
                        <number>6</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </attribute>
                       <attribute name="horizontalHeaderCascadingSectionResizes">
                        <bool>false</bool>
@@ -3143,6 +3150,7 @@ QPushButton{
                        <property name="font">
                         <font>
                          <family>Cambria</family>
+                         <weight>50</weight>
                          <bold>false</bold>
                         </font>
                        </property>
@@ -3308,6 +3316,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -3617,7 +3626,7 @@ QPushButton{
                        <number>6</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </attribute>
                       <attribute name="horizontalHeaderCascadingSectionResizes">
                        <bool>false</bool>
@@ -3678,6 +3687,7 @@ QPushButton{
                        <property name="font">
                         <font>
                          <family>Cambria</family>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>
@@ -3834,11 +3844,12 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
                       <property name="text">
-                       <string>Danh sách nhân viên</string>
+                       <string>Danh sách tài khoản</string>
                       </property>
                      </widget>
                     </item>
@@ -4153,6 +4164,7 @@ QPushButton{
                        </property>
                        <property name="font">
                         <font>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>
@@ -4283,6 +4295,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -4588,7 +4601,7 @@ QPushButton{
                        <number>6</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </attribute>
                       <attribute name="horizontalHeaderCascadingSectionResizes">
                        <bool>false</bool>
@@ -4782,6 +4795,7 @@ QPushButton{
                        <font>
                         <family>Cambria</family>
                         <pointsize>15</pointsize>
+                        <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
@@ -5101,6 +5115,7 @@ QPushButton{
                        </property>
                        <property name="font">
                         <font>
+                         <weight>75</weight>
                          <bold>true</bold>
                         </font>
                        </property>

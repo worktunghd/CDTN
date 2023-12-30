@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, text, update, or_
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from src.models import OrderDetail
 from src.models.base import Base
 from src.views.common.Common import warningMessagebox
 import configparser

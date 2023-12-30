@@ -1,20 +1,20 @@
 from src.controllers.BaseController import BaseController
 import re
-from src.models.users import User
+from src.models.Employees import Employees
 
 
 class UserController(BaseController):
 
     def __init__(self):
-        super().__init__(model=User)
+        super().__init__(model=Employees)
 
     def checkExitsUser(self, username):
-        sql = f"SELECT * FROM users WHERE username='{username}'"
+        sql = f"SELECT * FROM Employees WHERE username='{username}'"
         result = self.findFirstByQuery(sql)
         return result
 
-    def checkExitsUserUpdate(self, username, user_id):
-        sql = f"SELECT users.id FROM users WHERE username = '{username}' AND id != '{user_id}'"
+    def checkExitsUserUpdate(self, username, employee_id):
+        sql = f"SELECT Employees.id FROM Employees WHERE username = '{username}' AND id != '{employee_id}'"
         result = self.findFirstByQuery(sql)
         return result
 
@@ -40,18 +40,18 @@ class UserController(BaseController):
         phone_number_pattern = re.compile(r'^0\d{9}$')
         return bool(phone_number_pattern.match(input_str))
 
-    def saveUser(self, user: User):
+    def saveUser(self, user: Employees):
         return bool(self.insertData(user))
 
-    def updateUser(self, user: User, user_id):
+    def updateUser(self, user: Employees, employee_id):
         return
 
-    def updateUserWithModel(self, data, user_id):
-        return self.updateDataWithModel(data, user_id)
+    def updateUserWithModel(self, data, employee_id):
+        return self.updateDataWithModel(data, employee_id)
 
     def login(self, data):
         username = data.get("username", "")
         password = data.get("password", "")
-        sql = f"SELECT * FROM users WHERE username='{username}' and password = '{password}'"
+        sql = f"SELECT * FROM Employees WHERE username='{username}' and password = '{password}'"
 
         return self.connection.findFirstByQuery(sql)
